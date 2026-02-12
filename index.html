@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Valentine for ZAYA💝</title>
+    <title>Love Me Valentine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap');
-        
         * {
             margin: 0;
             padding: 0;
@@ -21,28 +22,9 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            overflow-x: hidden;
             position: relative;
-        }
-
-        .title {
-            font-size: clamp(2rem, 8vw, 3.5rem);
-            font-weight: 800;
-            margin-bottom: 2rem;
-            text-align: center;
-            padding: 0 1rem;
-        }
-
-        .title .love {
-            color: #a8e063;
-        }
-
-        .title .me {
-            color: #ffffff;
-        }
-
-        .title .valentine {
-            color: #ffffff;
+            padding: 1rem;
         }
 
         .question-container {
@@ -134,6 +116,7 @@
             background: linear-gradient(135deg, #a8a8a8 0%, #c0c0c0 100%);
             color: white;
             position: absolute;
+            transition: none;
         }
 
         #noBtn:hover {
@@ -226,20 +209,32 @@
         /* Mobile adjustments */
         @media (max-width: 600px) {
             .question-container {
-                padding: 2rem 1.5rem;
+                padding: 1.5rem 1.2rem;
             }
-            
+
+            .photo-container {
+                margin-bottom: 1rem;
+            }
+
+            .question {
+                margin-bottom: 1.5rem;
+            }
+
             .btn {
                 min-width: 80px;
                 padding: 0.7rem 1.5rem;
+            }
+
+            .warning-text {
+                margin-top: 1rem;
             }
         }
     </style>
 </head>
 <body>
-<div class="question-container" id="questionContainer">
+    <div class="question-container" id="questionContainer">
         <div class="photo-container">
-            <img src="photo.jpg" alt="Photo" class="main-photo">
+            <img src="photo.jpg" alt="Valentine photo" class="main-photo">
         </div>
 
         <div class="question">ZAYA will you be my valentine?</div>
@@ -253,10 +248,11 @@
     </div>
 
     <div class="success-screen" id="successScreen">
-        <h1>I KNEW IT! 💕</h1>
-        <p>Love you too ❤️❤️❤️</p>
+        <h1>I KNEW IT!</h1>
+        <p>Love you too</p>
         <video autoplay loop muted playsinline class="celebration-video">
             <source src="celebration.mp4" type="video/mp4">
+            Your browser does not support the video tag.
         </video>
     </div>
 
@@ -266,25 +262,23 @@
         const questionContainer = document.getElementById('questionContainer');
         const successScreen = document.getElementById('successScreen');
         const buttonContainer = document.getElementById('buttonContainer');
-        
-        let attemptCount = 0;
+
+        let celebrated = false;
 
         function getRandomPosition() {
             const container = buttonContainer.getBoundingClientRect();
             const btnRect = noBtn.getBoundingClientRect();
-            
-            const maxX = container.width - btnRect.width - 20;
-            const maxY = container.height - btnRect.height - 20;
-            
-            const x = Math.random() * maxX;
-            const y = Math.random() * maxY;
-            
+
+            const maxX = container.width - btnRect.width;
+            const maxY = container.height - btnRect.height;
+
+            const x = Math.max(0, Math.random() * maxX);
+            const y = Math.max(0, Math.random() * maxY);
+
             return { x, y };
         }
 
         function moveNoButton() {
-            attemptCount++;
-            
             const pos = getRandomPosition();
             noBtn.style.left = pos.x + 'px';
             noBtn.style.top = pos.y + 'px';
@@ -293,31 +287,30 @@
         function createHeart() {
             const heart = document.createElement('div');
             heart.className = 'heart';
-            heart.textContent = '❤️';
+            heart.textContent = '\u2764\uFE0F';
             heart.style.left = Math.random() * 100 + '%';
             heart.style.animationDelay = Math.random() * 2 + 's';
             document.body.appendChild(heart);
-            
+
             setTimeout(() => {
                 heart.remove();
             }, 4000);
         }
 
-        // Touch and mouse events for No button
-        noBtn.addEventListener('mouseenter', moveNoButton);
+        // Pointer events for No button (covers mouse + touch)
+        noBtn.addEventListener('pointerenter', moveNoButton);
         noBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            moveNoButton();
-        });
-        noBtn.addEventListener('pointerdown', (e) => {
             e.preventDefault();
             moveNoButton();
         });
 
         yesBtn.addEventListener('click', () => {
+            if (celebrated) return;
+            celebrated = true;
+
             questionContainer.style.display = 'none';
             successScreen.style.display = 'block';
-            
+
             // Create multiple hearts
             for (let i = 0; i < 30; i++) {
                 setTimeout(() => createHeart(), i * 100);
@@ -327,7 +320,7 @@
         // Initialize No button position
         window.addEventListener('load', () => {
             const container = buttonContainer.getBoundingClientRect();
-            noBtn.style.left = (container.width - 220) + 'px';
+            noBtn.style.left = (container.width - noBtn.offsetWidth - 20) + 'px';
             noBtn.style.top = '0px';
         });
     </script>
